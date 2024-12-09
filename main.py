@@ -70,7 +70,8 @@ replacements = {
     ">": "(greater than)",
     "\\": "(backslash)", # escaped backslash
     "|": "(pipe)",
-    "*": "(asterisk)"
+    "*": "(asterisk)",
+    "\"": "_"
 }
 
 def replace_with_dict(text, replacements):
