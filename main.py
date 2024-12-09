@@ -26,8 +26,9 @@ class Song:
         if len(self.number) == 1:
             self.number = "0" + self.number
 
-        if self.title.isdigit():
-            self.title = "(" + self.title + ")"
+        #if first char is a digit
+        if self.title[0].isdigit():
+            self.title = "_" + self.title
 
 
 
@@ -36,6 +37,9 @@ class Song:
         Returns a string representation of the song.
         """
         return f"'{self.title}' by {self.artist} from album '{self.album}' ({self.file_path})"
+
+
+
 
 
 def get_metadata(file_path):
@@ -55,6 +59,24 @@ def get_metadata(file_path):
     except Exception as e:
         print(f"Could not read metadata for {file_path}: {e}")
         return None  # Return None if metadata cannot be read
+
+
+
+replacements = {
+    ":": ";",
+    "/": "~~",
+    "?": "(question)",
+    "<": "(less than)",
+    ">": "(greater than)",
+    "\\": "(backslash)", # escaped backslash
+    "|": "(pipe)",
+    "*": "(asterisk)"
+}
+
+def replace_with_dict(text, replacements):
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
 
 
 # also sets file name to {number}{title}
@@ -83,7 +105,7 @@ def set_metadata(song, rename=True):
         # Rename file to {number}{title}.mp3
         if song.number is not None and rename:
             # Generate new file name with the track number and title
-            new_file_name = f"{song.number.strip()}{song.title.strip().replace('/', '~~')}.mp3"
+            new_file_name = f"{song.number.strip()}{replace_with_dict(song.title.strip(), replacements)}.mp3"
             new_file_path = song.file_path.parent / new_file_name
 
             # Rename the file
